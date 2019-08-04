@@ -9,6 +9,9 @@ import '@/style/index.less'
 // 目录下有默认索引文件index.js就是索引文件
 import router from '@/router'
 
+// 先打包在挂载,在Vue的原型上挂载axios,以后所有的实例都可以使用
+import axios from 'axios'
+Vue.prototype.$http = axios
 // 控制台信息,按照开发环境来提示
 Vue.config.productionTip = false
 

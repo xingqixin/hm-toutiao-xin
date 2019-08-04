@@ -39,8 +39,8 @@ export default {
     return {
       // 表单对象数据
       loginForm: {
-        mobile: '',
-        code: ''
+        mobile: '13888888888',
+        code: '246810'
       },
       // 表单校验规则数据
       loginRules: {
@@ -63,7 +63,17 @@ export default {
       this.$refs.loginForm.validate((valid) => {
         // validate这是element UI的方法
         if (valid) {
-          console.log('校验success')
+          // 请求登录接口
+          this.$http.post('http://ttapi.research.itcast.cn/mp/v1_0/authorizations', this.loginForm).then(res => {
+            console.log(res.data)
+            // 成功额时候跳转去首页
+            this.$router.push('/')
+          })
+            .catch(() => {
+              // 错误提示element UI会有自带的错误的提示
+              this.$message.error('手机号码或者验证码错误')
+            })
+          // then是请求成功的时候会调用,catch是在请求失败的时候调用,此时里面有一个错误对象,会拿到错误的内容
         }
       })
     }
