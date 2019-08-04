@@ -3,6 +3,8 @@ import App from './App.vue'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 
+import '@/style/index.less'
+
 // @是一个路径的别名, src路径别名.在Vue-cli下创建的项目下才可
 // 目录下有默认索引文件index.js就是索引文件
 import router from '@/router'
