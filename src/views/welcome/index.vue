@@ -1,5 +1,5 @@
-<template>
-    <div class="container">Welcome</div>
+<template style="text-align: center">
+    <img src="../../assets/images/welcome.jpg" alt="">
 </template>
 
 <script>
