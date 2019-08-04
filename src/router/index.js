@@ -17,12 +17,10 @@ const router = new VueRouter({
   }, {
 
     path: '/',
-    name: 'home',
     component: Home,
-    redirect: '/welcome',
     children: [
       {
-        path: '/welcome',
+        path: '/',
         name: 'welcome',
         component: Welcome
       }

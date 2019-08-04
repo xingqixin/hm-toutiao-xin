@@ -1,5 +1,7 @@
 <template>
-    <div class="container">Welcome</div>
+    <div class="container"  style="text-align: center">
+        <img src="../../assets/images/welcome.jpg" alt="">
+    </div>
 </template>
 
 <script>
