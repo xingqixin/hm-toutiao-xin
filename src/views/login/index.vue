@@ -61,22 +61,31 @@ export default {
   methods: {
     login () {
       // 对整个表单进行校验,当前组件下所有表明ref属性的元素,valid是一个形参,为真就是校验成功,否则就是校验失败,默认会给错误的提示,注意: 要给表单绑定ref属性
-      this.$refs.loginForm.validate((valid) => {
+      this.$refs.loginForm.validate(async valid => {
         // validate这是element UI的方法
         if (valid) {
-          // 请求登录接口
-          this.$http.post('http://ttapi.research.itcast.cn/mp/v1_0/authorizations', this.loginForm).then(res => {
-            // console.log(res.data)
-            // 存储用户信息
-            store.setUser(res.data.data)
-            // 成功额时候跳转去首页
-            this.$router.push('/')
-          })
-            .catch(() => {
-              // 错误提示element UI会有自带的错误的提示
-              this.$message.error('手机号码或者验证码错误')
-            })
+        //   // 请求登录接口
+        //   this.$http.post('http://ttapi.research.itcast.cn/mp/v1_0/authorizations', this.loginForm).then(res => {
+        //     // console.log(res.data)
+        //     // 存储用户信息
+        //     store.setUser(res.data.data)
+        //     // 成功额时候跳转去首页
+        //     this.$router.push('/')
+        //   })
+        //     .catch(() => {
+        //       // 错误提示element UI会有自带的错误的提示
+        //       this.$message.error('手机号码或者验证码错误')
+        //     })
           // then是请求成功的时候会调用,catch是在请求失败的时候调用,此时里面有一个错误对象,会拿到错误的内容
+
+          // 解构赋值,第一个data是res.data,第二个data,表示res.data.data
+          // async&await使用 ,怎么处理错误 try{}catch(e){}捕获异常,当我在执行某一段代码的时候,不能帮保证是够正确执行,可能出现报错的时候,则用catch包起来,容易处理异常
+          try {
+            const { data: { data } } = await this.$http.post('authorizations', this.loginForm)
+            store.setUser(data)
+          } catch (e) {
+            this.$message.error('手机号码验证错误')
+          }
         }
       })
     }
