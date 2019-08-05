@@ -28,6 +28,7 @@
 </template>
 
 <script>
+import store from '@/store'
 export default {
   data () {
     // 申明校验函数
@@ -39,7 +40,7 @@ export default {
     return {
       // 表单对象数据
       loginForm: {
-        mobile: '13888888888',
+        mobile: '13911111111',
         code: '246810'
       },
       // 表单校验规则数据
@@ -65,7 +66,9 @@ export default {
         if (valid) {
           // 请求登录接口
           this.$http.post('http://ttapi.research.itcast.cn/mp/v1_0/authorizations', this.loginForm).then(res => {
-            console.log(res.data)
+            // console.log(res.data)
+            // 存储用户信息
+            store.setUser(res.data.data)
             // 成功额时候跳转去首页
             this.$router.push('/')
           })
