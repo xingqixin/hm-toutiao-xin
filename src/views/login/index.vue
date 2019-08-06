@@ -83,6 +83,7 @@ export default {
           try {
             const { data: { data } } = await this.$http.post('authorizations', this.loginForm)
             store.setUser(data)
+            this.$router.push('/')
           } catch (e) {
             this.$message.error('手机号码验证错误')
           }
