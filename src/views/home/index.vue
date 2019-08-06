@@ -47,7 +47,8 @@
       <el-header>
         <span class="el-icon-s-fold" @click="toggleMenu()"></span>
         <span class="text">江苏传智播客科技教育有限公司</span>
-        <el-dropdown class="my-dropdown">
+        <!-- command是element自带的属性 -->
+        <el-dropdown class="my-dropdown" @command="changeMenu">
           <span class="el-dropdown-link">
             <!-- 动态绑定用户照片 -->
             <img :src="photo" alt />
@@ -56,9 +57,11 @@
             <i class="el-icon-arrow-down el-icon--right"></i>
           </span>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item icon="el-icon-setting" @click.native="setting()">个人设置</el-dropdown-item>
+            <el-dropdown-item icon="el-icon-setting" command="setting">个人设置</el-dropdown-item>
+            <!-- <el-dropdown-item icon="el-icon-setting" @click.native="setting()">个人设置</el-dropdown-item> -->
             <!-- 添加点击事件后,要在methods中添加两个方法 -->
-            <el-dropdown-item icon="el-icon-unlock" @click.native="logout()">退出登录</el-dropdown-item>
+            <el-dropdown-item icon="el-icon-unlock" command="logout">退出登录</el-dropdown-item>
+            <!-- <el-dropdown-item icon="el-icon-unlock" @click.native="logout()">退出登录</el-dropdown-item> -->
           </el-dropdown-menu>
         </el-dropdown>
       </el-header>
@@ -101,6 +104,10 @@ export default {
       // 想要退出的时候,需要在store里面设置清除信息的设置
       store.clearUser()
       this.$router.push({ name: 'login' })
+    },
+    // 绑定事件的时候不加括号的原因是为了接受默认参数,加上括号就不能接受组件内部的默认参数,此时在点击的时候,会将当期点击的那个的command绑定的后面的方法传进去,会默认执行该方法
+    changeMenu (menuType) {
+      this[menuType]()
     }
   }
 }
