@@ -47,15 +47,21 @@
       <el-header>
         <span class="el-icon-s-fold" @click="toggleMenu()"></span>
         <span class="text">江苏传智播客科技教育有限公司</span>
-        <el-dropdown class="my-dropdown">
+        <!-- command是element自带的属性 -->
+        <el-dropdown class="my-dropdown" @command="changeMenu">
           <span class="el-dropdown-link">
-            <img src="../../assets/images/avatar.jpg" alt />
-            用户名称
+            <!-- 动态绑定用户照片 -->
+            <img :src="photo" alt />
+            <!-- 用户名称使用插值表达式 -->
+            {{name}}
             <i class="el-icon-arrow-down el-icon--right"></i>
           </span>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>个人设置</el-dropdown-item>
-            <el-dropdown-item>退出登录</el-dropdown-item>
+            <el-dropdown-item icon="el-icon-setting" command="setting">个人设置</el-dropdown-item>
+            <!-- <el-dropdown-item icon="el-icon-setting" @click.native="setting()">个人设置</el-dropdown-item> -->
+            <!-- 添加点击事件后,要在methods中添加两个方法 -->
+            <el-dropdown-item icon="el-icon-unlock" command="logout">退出登录</el-dropdown-item>
+            <!-- <el-dropdown-item icon="el-icon-unlock" @click.native="logout()">退出登录</el-dropdown-item> -->
           </el-dropdown-menu>
         </el-dropdown>
       </el-header>
@@ -68,17 +74,40 @@
 </template>
 
 <script>
-
+import store from '@/store'
 export default {
   data () {
     return {
-      isCollapse: false
+      isCollapse: false,
+      // 获取数据前,定义数据
+      name: '',
+      photo: ''
     }
+  },
+  created () {
+    const user = store.getUser()
+    this.name = user.name
+    this.photo = user.photo
   },
   methods: {
     toggleMenu () {
       // 切换侧边栏的展开和收起,默认展开false
       this.isCollapse = !this.isCollapse
+    },
+    setting () {
+      // 点击跳转的时候,没有跳转,是因为函数没有执行,点击事件,是原生的事件,click是原生事件,是原生的dom支持的事件,但现在的el-dropdown-item都不是原生的dom,组件的背后是原生的dom,解决思路绑定在组件解析后的原生dom上,在click后面添加native
+      // 表现为@click.native
+      // this.$router.push({ name: 'setting' })
+      this.$router.push('/setting')
+    },
+    logout () {
+      // 想要退出的时候,需要在store里面设置清除信息的设置
+      store.clearUser()
+      this.$router.push({ name: 'login' })
+    },
+    // 绑定事件的时候不加括号的原因是为了接受默认参数,加上括号就不能接受组件内部的默认参数,此时在点击的时候,会将当期点击的那个的command绑定的后面的方法传进去,会默认执行该方法
+    changeMenu (menuType) {
+      this[menuType]()
     }
   }
 }
