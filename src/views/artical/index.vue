@@ -55,7 +55,7 @@
       <!-- 筛选结果  -->
   <el-card>
     <div slot="header">
-      根据筛选条件共查询到53400条结果
+      根据筛选条件共查询到{{total}}条结果
     </div>
     <!-- 表格组件  data动态绑定的是列表数据 prop="img"指定字段名 prop的作用是拿出某个字段下某个数据对应的值-->
       <el-table :data="articles">
@@ -90,12 +90,16 @@
             </template>
           </el-table-column>
       </el-table>
-    <!-- 分页组件 -->
+    <!-- 分页组件:total="1000"指定总条数,默认10条每页,所以需要修改
+     layout="prev, pager, next"表示 分页包含上一页按钮,页码按钮,和下一页按钮-->
    <div style="text-align:center;margin-top:20px  ">
       <el-pagination
         background
         layout="prev, pager, next"
-        :total="1000">
+        :total="total"
+        :page-size="reqParams.per_page"
+        @current-change="changePager"
+        >
       </el-pagination>
    </div>
   </el-card>
@@ -135,7 +139,9 @@ export default {
       // 日期数据
       dateArr: [],
       // 文章列表
-      articles: []
+      articles: [],
+      // 总条数
+      total: 0
     }
   },
   created () {
@@ -145,6 +151,13 @@ export default {
     this.getArticles()
   },
   methods: {
+    // 分页事件对应函数
+    changePager (newPage) {
+      // 新的页面,是你当前的点击的页码,要想后台拿取数据
+      // 修改获取数据的页码,想后发请求
+      this.reqParams.page = newPage
+      this.getArticles()
+    },
     async getChannelOptions () {
       const { data: { data } } = await this.$http.get('channels')
       this.channelOptions = data.channels
@@ -155,6 +168,8 @@ export default {
       const { data: { data } } = await this.$http.get('articles', { params: this.reqParams })
       // 给当前的文章列表赋值,articles
       this.articles = data.results
+      // 总条数数据
+      this.total = data.total_count
     }
   }
 }
