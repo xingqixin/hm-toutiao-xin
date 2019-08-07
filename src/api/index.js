@@ -1,10 +1,21 @@
 // 配置一个axios,导出一个配置好的axios
 import axios from 'axios'
 import store from '@/store'
-// import router from '@/router'
+import JSONBig from 'json-bigint'
 
 // 进行配置
 axios.defaults.baseURL = 'http://ttapi.research.itcast.cn/mp/v1_0/'
+axios.defaults.transformResponse = [
+  (data) => {
+    // data 现在是后端的原始数据
+    // 后台如果没有返回数据,此时返回的是null,则阻止运行,
+    try {
+      return JSONBig.parse(data)
+    } catch (e) {
+      return data
+    }
+  }
+]
 // 代码只会执行一次,如果当时存了token就不会再执行了
 // axios.defaults.headers = {
 //   Authorization: `Bearer ${store.getUser().token}`

@@ -46,7 +46,8 @@
               range-separator="至"
               start-placeholder="开始日期"
               end-placeholder="结束日期"
-              @change="changeDate">
+              @change="changeDate"
+              value-format="yyyy-MM-dd">
           </el-date-picker>
       </el-form-item>
       <el-form-item>
@@ -88,7 +89,7 @@
           <el-table-column label="操作" width="120px">
             <!-- 作用域插槽的使用,因为是两个自定义的按钮,在后续的操作中,需要用到当前的id -->
             <template slot-scope="scope">
-              <el-button type="primary" plain icon="el-icon-edit" circle></el-button>
+              <el-button type="primary" @click="edit(scope.row.id)" plain icon="el-icon-edit" circle ></el-button>
               <el-button type="danger" @click="del(scope.row.id)" plain icon="el-icon-delete" circle></el-button>
             </template>
           </el-table-column>
@@ -104,8 +105,7 @@
         :total="total"
         :page-size="reqParams.per_page"
         :current-page="reqParams.page"
-        @current-change="changePager"
-        >
+        @current-change="changePager">
       </el-pagination>
    </div>
   </el-card>
@@ -167,6 +167,23 @@ export default {
     this.getArticles()
   },
   methods: {
+    // 编辑函数
+    edit (id) {
+      this.$router.push('/publish?id=' + id)
+    },
+    // 删除函数
+    del (id) {
+      // 弹出确认框, 发删除请求 响应成功更新列表
+      this.$confirm('您是否要删除该文章, 是否继续?', '温馨提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async () => {
+        // 点击确认
+        await this.$http.delete(`articles/${id}`)
+        this.$message.success('删除文章成功')
+      }).catch(() => {})
+    },
     // 日期选择后的事件
     changeDate (dateArr) {
       // 要严谨一点,当用户清空数据的时候,有值的时候将代码放进去,妹纸的时候null
