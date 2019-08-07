@@ -26,8 +26,9 @@
         </el-radio-group>
       </el-form-item>
       <el-form-item label="频道:">
-        <!-- 是一个下拉框 v-model="value"表示将来下拉的时候选中的某一项选中的数据 ,最终应该提交给后台 -->
-        <el-select v-model="reqParams.channel_id" placeholder="请选择">
+        <!-- 是一个下拉框 v-model="value"表示将来下拉的时候选中的某一项选中的数据 ,最终应该提交给后台
+        clearable清除功能 -->
+        <el-select clearable v-model="reqParams.channel_id" placeholder="请选择">
            <!-- v-for表示遍历我们的channelOptions中的item.取出来我们item中的value和key标识 -->
           <el-option
             v-for="item in channelOptions"
@@ -44,11 +45,13 @@
               type="daterange"
               range-separator="至"
               start-placeholder="开始日期"
-              end-placeholder="结束日期">
+              end-placeholder="结束日期"
+              @change="changeDate">
           </el-date-picker>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary">筛选</el-button>
+        <!-- 绑定点击事件,search不带括号,默认传参 -->
+        <el-button type="primary" @click="search">筛选</el-button>
       </el-form-item>
     </el-form>
   </el-card>
@@ -92,12 +95,15 @@
       </el-table>
     <!-- 分页组件:total="1000"指定总条数,默认10条每页,所以需要修改
      layout="prev, pager, next"表示 分页包含上一页按钮,页码按钮,和下一页按钮-->
+      <!-- @current-change="changePager"页码改变事件 -->
+      <!-- 更新过数据收,当前页码也必须选中对应的按钮 current-page-->
    <div style="text-align:center;margin-top:20px  ">
       <el-pagination
         background
         layout="prev, pager, next"
         :total="total"
         :page-size="reqParams.per_page"
+        :current-page="reqParams.page"
         @current-change="changePager"
         >
       </el-pagination>
@@ -144,6 +150,16 @@ export default {
       total: 0
     }
   },
+  // computed计算属性,使用场景,当需要一个新数据,需要依赖data中的数据的视乎,需要使用计算属性,
+  // watch想监听到某一个数据的变化,侦听器的使用场景,当需要监听某一个数据的改变或者说变化,或者说开销较大的操作,即耗时较大的时候,使用侦听器
+  watch: {
+    'reqParams.channel_id': function (newVal, oldVal) {
+      // console.log(newVal)
+      if (newVal === '') {
+        this.reqParams.channel_id = null
+      }
+    }
+  },
   created () {
     // 获取频道下拉选项数据,拿取数据是一种行为,行为写在methods里面
     this.getChannelOptions()
@@ -151,6 +167,23 @@ export default {
     this.getArticles()
   },
   methods: {
+    // 日期选择后的事件
+    changeDate (dateArr) {
+      // 要严谨一点,当用户清空数据的时候,有值的时候将代码放进去,妹纸的时候null
+      if (dateArr) {
+        this.reqParams.begin_pubdate = dateArr[0]
+        this.reqParams.end_pubdate = dateArr[1]
+      } else {
+        this.reqParams.begin_pubdate = null
+        this.reqParams.end_pubdate = null
+      }
+    },
+    // 筛选事件
+    search () {
+    // 筛选项都是双向绑定的,拿着对应的数据发请求即可,狐疑,重新筛选后页码第一页
+      this.reqParams.page = 1
+      this.getArticles()
+    },
     // 分页事件对应函数
     changePager (newPage) {
       // 新的页面,是你当前的点击的页码,要想后台拿取数据
