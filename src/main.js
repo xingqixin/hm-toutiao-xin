@@ -11,7 +11,10 @@ import router from '@/router'
 
 // 先打包在挂载,在Vue的原型上挂载axios,以后所有的实例都可以使用
 import axios from '@/api'
+// 将全局组件注册到全局
+import comPo from '@/components'
 Vue.prototype.$http = axios
+Vue.use(comPo)
 // 控制台信息,按照开发环境来提示
 Vue.config.productionTip = false
 

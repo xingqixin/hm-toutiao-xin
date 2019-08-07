@@ -4,11 +4,14 @@
   <el-card>
     <div slot="header">
       <!-- 面包屑导航 -->
-      <el-breadcrumb separator-class="el-icon-arrow-right">
+      <!-- <el-breadcrumb separator-class="el-icon-arrow-right"> -->
         <!-- :to属性可以发生跳转 -->
-        <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-        <el-breadcrumb-item>内容管理</el-breadcrumb-item>
-      </el-breadcrumb>
+        <!-- <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item> -->
+        <!-- <el-breadcrumb-item>内容管理</el-breadcrumb-item> -->
+      <!-- </el-breadcrumb> -->
+
+      <!-- 此时封装了一个面包屑组件,先在下面引入再使用 -->
+      <my-bread>内容管理</my-bread>
     </div>
     <!-- label-width="80px"给所有的文字说明设置宽度 ,size="small"表示小号表单 -->
     <el-form label-width="80px" size="small">
@@ -55,6 +58,8 @@
 </template>
 
 <script>
+// 因为组件是很多地方都要用的,所以要将局部组件进行全局注册,
+// import myBread from '@/components/my-bread'
 export default {
   // created () {
   //   // 发请求
@@ -62,6 +67,9 @@ export default {
   //     console.log(res.data)
   //   })
   // }
+  // components: {
+  //   myBread
+  // },
   data () {
     return {
       // 筛选项表单数据 提交给后台的参数
