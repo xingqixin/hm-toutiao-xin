@@ -31,9 +31,9 @@
            <!-- v-for表示遍历我们的channelOptions中的item.取出来我们item中的value和key标识 -->
           <el-option
             v-for="item in channelOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
+            :key="item.id"
+            :label="item.name"
+            :value="item.id">
           </el-option>
   </el-select>
       </el-form-item>
@@ -57,9 +57,38 @@
     <div slot="header">
       根据筛选条件共查询到53400条结果
     </div>
-    <!-- 表格组件  data动态绑定的是列表数据 prop="img"指定字段名-->
+    <!-- 表格组件  data动态绑定的是列表数据 prop="img"指定字段名 prop的作用是拿出某个字段下某个数据对应的值-->
       <el-table :data="articles">
-          <el-table-column label="封面" prop="img"></el-table-column>
+          <el-table-column label="封面" prop="img">
+            <!-- 因为要看到的是图片,所以需要插入额外的内容,而不是组件内部默认的内容 ,拿到组件内部img对应的数据,此时使用插槽-->
+            <template slot-scope="scope">
+               <el-image :src="scope.row.cover.images[0]" style="width:90px;height: 80px">
+                  <div slot="error" class="image-slot">
+                    <img src="../../assets/images/error.gif" style="width:90px;height: 80px" alt="">
+                  </div>
+                </el-image>
+            </template>
+          </el-table-column>
+          <el-table-column label="标题" prop="title"></el-table-column>
+          <el-table-column label="状态">
+            <!-- 作用域插槽的使用 -->
+              <template slot-scope="scope">
+                <!-- 根据值显示不同的样式 -->
+                <el-tag v-if="scope.row.status===0" type="info" >草稿</el-tag>
+                <el-tag v-if="scope.row.status===1">待审核</el-tag>
+                <el-tag v-if="scope.row.status===2" type="success" >审核通过</el-tag>
+                <el-tag v-if="scope.row.status===3" type="warning" >审核失败</el-tag>
+                <el-tag v-if="scope.row.status===4" type="danger" >删除</el-tag>
+              </template>
+          </el-table-column>
+          <el-table-column label="发布时间" prop="pubdate"></el-table-column>
+          <el-table-column label="操作" width="120px">
+            <!-- 作用域插槽的使用,因为是两个自定义的按钮,在后续的操作中,需要用到当前的id -->
+            <template slot-scope="scope">
+              <el-button type="primary" plain icon="el-icon-edit" circle></el-button>
+              <el-button type="danger" @click="del(scope.row.id)" plain icon="el-icon-delete" circle></el-button>
+            </template>
+          </el-table-column>
       </el-table>
     <!-- 分页组件 -->
    <div style="text-align:center;margin-top:20px  ">
@@ -90,17 +119,42 @@ export default {
   data () {
     return {
       // 筛选项表单数据 提交给后台的参数
+      // axios 提交的数据,值为null是不会携带参数的
       reqParams: {
         // 默认选中全部
         status: null,
-        channel_id: null
+        channel_id: null,
+        begin_pubdate: null,
+        end_pubdate: null,
+        page: 1,
+        per_page: 20
+
       },
       // 频道数据,下拉数据,此时设置的是假数据,以后需要渲染新的数据,因为上面获取的是value和label所以需要设置两个数据,同时key此时用我们的value来表示唯一标识
-      channelOptions: [{ value: 1, label: 'js' }],
+      channelOptions: [],
       // 日期数据
       dateArr: [],
       // 文章列表
       articles: []
+    }
+  },
+  created () {
+    // 获取频道下拉选项数据,拿取数据是一种行为,行为写在methods里面
+    this.getChannelOptions()
+    // 获取文章列表数据
+    this.getArticles()
+  },
+  methods: {
+    async getChannelOptions () {
+      const { data: { data } } = await this.$http.get('channels')
+      this.channelOptions = data.channels
+    },
+    async getArticles () {
+      // axios get传参 url?key=value&key1=value...太麻烦
+      // axios get传参,对象的形式,{params:指定传参对象} 发请求的时候,会自动拼接在地址栏之后
+      const { data: { data } } = await this.$http.get('articles', { params: this.reqParams })
+      // 给当前的文章列表赋值,articles
+      this.articles = data.results
     }
   }
 }
