@@ -53,6 +53,23 @@
     </el-form>
   </el-card>
       <!-- 筛选结果  -->
+  <el-card>
+    <div slot="header">
+      根据筛选条件共查询到53400条结果
+    </div>
+    <!-- 表格组件  data动态绑定的是列表数据 prop="img"指定字段名-->
+      <el-table :data="articles">
+          <el-table-column label="封面" prop="img"></el-table-column>
+      </el-table>
+    <!-- 分页组件 -->
+   <div style="text-align:center;margin-top:20px  ">
+      <el-pagination
+        background
+        layout="prev, pager, next"
+        :total="1000">
+      </el-pagination>
+   </div>
+  </el-card>
 
     </div>
 </template>
@@ -81,12 +98,16 @@ export default {
       // 频道数据,下拉数据,此时设置的是假数据,以后需要渲染新的数据,因为上面获取的是value和label所以需要设置两个数据,同时key此时用我们的value来表示唯一标识
       channelOptions: [{ value: 1, label: 'js' }],
       // 日期数据
-      dateArr: []
+      dateArr: [],
+      // 文章列表
+      articles: []
     }
   }
 }
 </script>
 
 <style>
-
+ .el-card {
+   margin-bottom: 20px;
+ }
 </style>
