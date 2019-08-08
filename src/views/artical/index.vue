@@ -28,15 +28,9 @@
       <el-form-item label="频道:">
         <!-- 是一个下拉框 v-model="value"表示将来下拉的时候选中的某一项选中的数据 ,最终应该提交给后台
         clearable清除功能 -->
-        <el-select clearable v-model="reqParams.channel_id" placeholder="请选择">
-           <!-- v-for表示遍历我们的channelOptions中的item.取出来我们item中的value和key标识 -->
-          <el-option
-            v-for="item in channelOptions"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id">
-          </el-option>
-  </el-select>
+        <!-- 使用自己封装的组件 -->
+        <!-- 组件不支持v-model,所以v-model背后 :value  @input -->
+        <my-channel v-model="reqParams.channel_id" ></my-channel>
       </el-form-item>
       <el-form-item label="日期:">
         <!-- type="daterange"表示日期范围的意思start-placeholder="开始日期"表示不选择某一天的时候的占位符 日期要提交给后台 v-model="value1"表示两个数据,所以是一个数组的形式,-->
@@ -152,17 +146,7 @@ export default {
   },
   // computed计算属性,使用场景,当需要一个新数据,需要依赖data中的数据的视乎,需要使用计算属性,
   // watch想监听到某一个数据的变化,侦听器的使用场景,当需要监听某一个数据的改变或者说变化,或者说开销较大的操作,即耗时较大的时候,使用侦听器
-  watch: {
-    'reqParams.channel_id': function (newVal, oldVal) {
-      // console.log(newVal)
-      if (newVal === '') {
-        this.reqParams.channel_id = null
-      }
-    }
-  },
   created () {
-    // 获取频道下拉选项数据,拿取数据是一种行为,行为写在methods里面
-    this.getChannelOptions()
     // 获取文章列表数据
     this.getArticles()
   },
@@ -207,10 +191,6 @@ export default {
       // 修改获取数据的页码,想后发请求
       this.reqParams.page = newPage
       this.getArticles()
-    },
-    async getChannelOptions () {
-      const { data: { data } } = await this.$http.get('channels')
-      this.channelOptions = data.channels
     },
     async getArticles () {
       // axios get传参 url?key=value&key1=value...太麻烦
