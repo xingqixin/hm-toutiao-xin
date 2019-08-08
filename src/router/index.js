@@ -6,6 +6,7 @@ import Home from '@/views/home'
 import Welcome from '@/views/welcome'
 import Artical from '@/views/artical'
 import Notfound from '@/views/404'
+import Image from '@/views/image'
 
 // 拿取用户信息
 import store from '@/store'
@@ -33,6 +34,11 @@ const router = new VueRouter({
         path: '/artical',
         name: 'artical',
         component: Artical
+      },
+      {
+        path: '/image',
+        name: 'image',
+        component: Image
       }
     ]
   },
