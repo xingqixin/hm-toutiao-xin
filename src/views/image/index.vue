@@ -23,7 +23,7 @@
         </div>
       </div>
     </el-card>
-    <el-dialog title="添加素材" :visible.sync="dialogVisible" width="300px" :before-close="handleClose">
+    <el-dialog title="添加素材" :visible.sync="dialogVisible" width="300px">
       <el-upload
         class="avatar-uploader"
         action="http://ttapi.research.itcast.cn/mp/v1_0/user/images"
@@ -82,13 +82,22 @@ export default {
   },
   methods: {
     // 上传图片成功的函数
-    handleSuccess () {
+    handleSuccess (res) {
       // 1.获取图片地址显示img标签
+      this.imageUrl = res.data.url
       // 2. 提示上传成功
+      this.$message.success('上传成功')
       // 3. 过2s后关闭对话框,更新列表信息
+      window.setTimeout(() => {
+        this.dialogVisible = false
+        this.reqParams.page = 1
+        this.getImages()
+      }, 2000)
     },
     // 打开对话框
     openDialog () {
+      // 打开前清空预览图
+      this.imageUrl = null
       this.dialogVisible = true
     },
     // 全选和收藏的实现
