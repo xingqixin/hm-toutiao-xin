@@ -17,7 +17,7 @@
         <div class="img_item" v-for="item in images" :key="item.id">
           <img :src="item.url" alt />
           <div class="foot" v-show="!reqParams.collect">
-            <span class="el-icon-star-off" :class="{selected:item.is_collected}"></span>
+            <span @click="toggleCollect(item)" class="el-icon-star-off" :class="{selected:item.is_collected}"></span>
             <span class="el-icon-delete"></span>
           </div>
         </div>
@@ -81,6 +81,16 @@ export default {
     this.getImages()
   },
   methods: {
+    // 添夹收藏和取消收藏
+    async toggleCollect (item) {
+      const { data: { data } } = await this.$http.put(`user/images/${item.id}`, {
+        collect: !item.is_collected
+      })
+      // 提示根据修改后的图片状态来进行提示
+      this.$message.success(data.collect ? '添加收藏成功' : '取消收藏成功')
+      // 更新当前图片的状态 可以根据当前的选中状态来改变他自身可能添加的样式
+      item.is_collected = data.collect
+    },
     // 上传图片成功的函数
     handleSuccess (res) {
       // 1.获取图片地址显示img标签
