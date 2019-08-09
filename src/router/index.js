@@ -7,6 +7,7 @@ import Welcome from '@/views/welcome'
 import Artical from '@/views/artical'
 import Notfound from '@/views/404'
 import Image from '@/views/image'
+import Publish from '@/views/publish'
 
 // 拿取用户信息
 import store from '@/store'
@@ -39,6 +40,11 @@ const router = new VueRouter({
         path: '/image',
         name: 'image',
         component: Image
+      },
+      {
+        path: '/publish',
+        name: 'publish',
+        component: Publish
       }
     ]
   },
