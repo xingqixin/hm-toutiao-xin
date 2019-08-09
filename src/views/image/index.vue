@@ -18,7 +18,7 @@
           <img :src="item.url" alt />
           <div class="foot" v-show="!reqParams.collect">
             <span @click="toggleCollect(item)" class="el-icon-star-off" :class="{selected:item.is_collected}"></span>
-            <span class="el-icon-delete"></span>
+            <span @click="deletImage(item.id)" class="el-icon-delete"></span>
           </div>
         </div>
       </div>
@@ -42,10 +42,15 @@
         <el-button @click="dialogVisible = false">取 消</el-button>
       </span>
     </el-dialog>
+    <!-- 分页 v-if="total>reqParams.per_page"逻辑判断,当你的总的数量大于页码每页的总数量的时候,才有分页的意义 -->
     <el-pagination
+      v-if="total>reqParams.per_page"
       background
       layout="prev, pager, next"
-      :total="1000"
+      :total="total"
+      :page-size="reqParams.per_page"
+      :current-page="reqParams.page"
+      @current-change="changePager"
       style="text-align:center;margin-top:20px"
     ></el-pagination>
   </div>
@@ -81,6 +86,25 @@ export default {
     this.getImages()
   },
   methods: {
+    // 删除图片
+    deletImage (id) {
+      this.$confirm('老铁此操作将永久删除该素材, 是否继续?', '温馨提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async () => {
+        // 点击删除的时候,向后台发请求,表示删除当前id,当成功删除的时候,提示信息,表示 删除成功
+        await this.$http.delete(`user/images/${id}`)
+        this.$message.success('删除成功')
+        // 更新列表
+        this.getImages()
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
+    },
     // 添夹收藏和取消收藏
     async toggleCollect (item) {
       const { data: { data } } = await this.$http.put(`user/images/${item.id}`, {
@@ -115,12 +139,19 @@ export default {
       this.reqParams.page = 1
       this.getImages()
     },
+    // 分页功能的实现
+    changePager (newPage) {
+      this.reqParams.page = newPage
+      this.getImages()
+    },
     // 调用接口
     async getImages () {
       const {
         data: { data }
       } = await this.$http.get('user/images', { params: this.reqParams })
       this.images = data.results
+      // 获取图片的总条数
+      this.total = data.total_count
     }
   }
 }
