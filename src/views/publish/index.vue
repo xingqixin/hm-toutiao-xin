@@ -22,9 +22,9 @@
             <el-radio :label="0">无图</el-radio>
             <el-radio :label="-1">自动</el-radio>
           </el-radio-group>
-          <div class="img_btn">
-            <img src="../../assets/images/default.png" alt="">
-          </div>
+            <!-- <img src="../../assets/images/default.png" alt=""> -->
+            <!-- 将来这里放的是素材选择组件 -->
+            <my-image></my-image>
         </el-form-item>
         <el-form-item label="频道:">
           <!-- 插槽的使用 -->
@@ -84,15 +84,4 @@ export default {
 }
 </script>
 
-<style scoped lang="less">
-.img_btn {
-  width: 160px;
-  height: 160px;
-  border: 1px solid #ddd;
-  img {
-    width: 100%;
-    height: 100%;
-    display: inline-block;
-  }
-}
-</style>
+<style scoped lang="less"></style>
