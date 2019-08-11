@@ -47,7 +47,7 @@
       <el-header>
         <span class="el-icon-s-fold" @click="toggleMenu()"></span>
         <span class="text">江苏传智播客科技教育有限公司</span>
-        <!-- command是element自带的属性 -->
+        <!-- command是element自带的属性 当给下拉菜单绑定了一个该属性的时候, -->
         <el-dropdown class="my-dropdown" @command="changeMenu">
           <span class="el-dropdown-link">
             <!-- 动态绑定用户照片 -->

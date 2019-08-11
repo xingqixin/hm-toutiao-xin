@@ -20,7 +20,7 @@ Vue.config.productionTip = false
 
 Vue.use(ElementUI)
 
-// main.js的职责就是:导入项目需要的以来,创建一个根实例
+// main.js的职责就是:导入项目需要的依赖,创建一个根实例
 new Vue({
   router,
   render: h => h(App)
