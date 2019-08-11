@@ -12,7 +12,7 @@
         </el-form-item>
         <el-form-item label="内容">
           <!-- 富文本的使用 -->
-          <quill-editor v-model="articleForm.content">
+          <quill-editor v-model="articleForm.content" :options="editorOption">
           </quill-editor>
         </el-form-item>
         <el-form-item label="封面:">
@@ -61,6 +61,23 @@ export default {
           images: []
         },
         channel_id: null
+      },
+      // 富文本设置
+      editorOption: {
+        // 占位符
+        placeholder: '富文本',
+        modules: {
+          // 配置工具栏,现阶段我写的是空
+          toolbar: [
+            ['bold', 'italic', 'underline', 'strike'],
+            ['blockquote', 'code-block'],
+            [{ 'header': 1 }, { 'header': 2 }],
+            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+            [{ 'indent': '-1' }, { 'indent': '+1' }],
+            ['image']
+
+          ]
+        }
       }
     }
   }
