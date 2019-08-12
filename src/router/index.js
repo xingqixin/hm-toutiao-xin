@@ -8,6 +8,7 @@ import Artical from '@/views/artical'
 import Notfound from '@/views/404'
 import Image from '@/views/image'
 import Publish from '@/views/publish'
+import Comment from '@/views/comment'
 
 // 拿取用户信息
 import store from '@/store'
@@ -45,6 +46,11 @@ const router = new VueRouter({
         path: '/publish',
         name: 'publish',
         component: Publish
+      },
+      {
+        path: '/comment',
+        name: 'comment',
+        component: Comment
       }
     ]
   },
