@@ -24,6 +24,7 @@
       </div>
     </el-card>
     <el-dialog title="添加素材" :visible.sync="dialogVisible" width="300px">
+      <!-- 上传内容的组件 -->
       <el-upload
         class="avatar-uploader"
         action="http://ttapi.research.itcast.cn/mp/v1_0/user/images"
