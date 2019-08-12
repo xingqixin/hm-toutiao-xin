@@ -3,7 +3,7 @@
     <!-- 基础布局 -->
     <el-card>
       <div slot="header">
-        <my-bread>发布文章</my-bread>
+        <my-bread>{{articleId?'修改文章':'发布文章'}}</my-bread>
       </div>
       <!-- 表单 -->
       <el-form label-width="100px">
@@ -39,9 +39,13 @@
           <my-channel v-model="articleForm.channel_id"></my-channel>
         </el-form-item>
         <!-- 底部按钮 -->
-        <el-form-item>
+        <el-form-item v-if="!articleId">
           <el-button type="primary" size="small" @click="submit(false)">发表</el-button>
           <el-button size="small" @click="submit(true)">存入草稿</el-button>
+        </el-form-item>
+        <el-form-item v-else>
+          <el-button type="success" size="small" @click="update(false)">修改</el-button>
+          <el-button size="small" @click="update(true)">存入草稿</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -86,10 +90,42 @@ export default {
 
           ]
         }
+      },
+      // 文章ID
+      articleId: null
+    }
+  },
+  watch: {
+    // 不仅仅是data中的数据才能去监听,$route实例的也可以
+    $route () {
+      // 此役步骤的操作的主要目的是将在修改的时候,忽然不想修改向点击发布文章的按钮,重新发布的时候的小操作
+      if (!this.$route.query.id) {
+        this.articleId = null
+        this.articleForm = {
+          title: null,
+          content: null,
+          cover: {
+            type: 1,
+            images: []
+          },
+          channel_id: null
+        }
       }
     }
   },
+  created () {
+    this.articleId = this.$route.query.id
+    // 判断有id是修改文章,获取当前数据
+    if (this.articleId) {
+      this.getArticle()
+    }
+  },
   methods: {
+    // 拿取文章数据,查看接口文档,的获取指定文章
+    async getArticle () {
+      const { data: { data } } = await this.$http.get('articles/' + this.articleId)
+      this.articleForm = data
+    },
     // 定义方法名,一张图和三张图切换的时候不保留上次图片
     changeType () {
       // 重置图片数据
@@ -99,6 +135,13 @@ export default {
     async submit (draft) {
       await this.$http.post(`articles?draft=${draft}`, this.articleForm)
       this.$message.success(draft ? '存入草稿成功' : '文章发表成功')
+      // 去内容管理
+      this.$router.push('/artical')
+    },
+    // 定义submit方法
+    async update (draft) {
+      await this.$http.put(`articles/${this.articleId}?draft=${draft}`, this.articleForm)
+      this.$message.success(draft ? '修改文章存入成功' : '文章修改成功')
       // 去内容管理
       this.$router.push('/artical')
     }
