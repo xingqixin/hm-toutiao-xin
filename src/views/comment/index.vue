@@ -16,18 +16,21 @@
               </el-table-column>
               <el-table-column lable="操作">
                   <template slot-scope="scope">
-                      <el-button  v-if="!scope.row.comment_status"  size="small" type="success">打开评论</el-button>
-                      <el-button v-else size="small" type="danger">关闭评论</el-button>
+                      <el-button @click="toggleStatus(scope.row)"  v-if="!scope.row.comment_status"  size="small" type="success">打开评论</el-button>
+                      <el-button @click="toggleStatus(scope.row)" v-else size="small" type="danger">关闭评论</el-button>
                   </template>
               </el-table-column>
           </el-table>
           <!-- 分页,可以从其他地方直接拿过来 -->
           <el-pagination
-                background
-                layout="prev, pager, next"
-                :total="1000"
-                style="margin-top: 15px">
-          </el-pagination>
+            v-if="total>reqParams.per_page"
+            background
+            layout="prev, pager, next"
+            :total="total"
+            :page-size="reqParams.per_page"
+            :current-page="reqParams.page"
+            @current-change="changePager"
+            ></el-pagination>
       </el-card>
 
   </div>
@@ -37,7 +40,7 @@
 export default {
   data () {
     return {
-      reqparams: {
+      reqParams: {
         response_type: 'comment',
         page: 1,
         per_page: 20
@@ -53,9 +56,23 @@ export default {
   },
   methods: {
     async getComments () {
-      const { data: { data } } = await this.$http.get('articles', { params: this.reqparams })
+      const { data: { data } } = await this.$http.get('articles', { params: this.reqParams })
       this.comments = data.results
-      this.total = data.count
+      this.total = data.total_count
+    },
+    changePager (newPage) {
+      this.reqParams.page = newPage
+      this.getComments()
+    },
+    // 点击按钮
+    async toggleStatus (row) {
+      // 向后台发请求
+      const { data: { data } } = await this.$http.put(`comments/status?article_id=${row.id}`, {
+        allow_comment: !row.comment_status
+      })
+      this.$message.success(data.allow_comment ? '打开评论成功' : '关闭评论成功')
+      // 修改当前的状态
+      row.comment_status = data.allow_comment
     }
   }
 }
