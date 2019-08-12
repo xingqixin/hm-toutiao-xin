@@ -2,7 +2,7 @@
     <div class='my-image'>
         <!-- // 图片按钮 -->
        <div class="img-btn">
-           <img :src="value||defaultImage" @click="openDialog" alt="">
+           <img :src="value||defaultImage" @click="openDialog()" alt="">
        </div>
        <!-- 对话框 -->
        <el-dialog

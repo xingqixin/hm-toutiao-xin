@@ -16,7 +16,7 @@
           </quill-editor>
         </el-form-item>
         <el-form-item label="封面:">
-          <el-radio-group v-model="articleForm.cover.type" @change="changeType()">
+          <el-radio-group v-model="articleForm.cover.type" @change="changeType">
             <el-radio :label="1">单图</el-radio>
             <el-radio :label="3">三图</el-radio>
             <el-radio :label="0">无图</el-radio>
