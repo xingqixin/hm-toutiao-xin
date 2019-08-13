@@ -29,10 +29,12 @@
                   <!-- 照片 -->
                   <el-upload
                     class="avatar-uploader"
-                    action="https://jsonplaceholder.typicode.com/posts/"
-                    :show-file-list="false">
+                    :show-file-list="false"
+                    action=""
+                    :http-request="myUpload">
                     <img v-if="userForm.photo" :src="userForm.photo" class="avatar">
                     <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                    <!-- 修改头像的接口是patch.而el-upload的默认的请求方式是post需要使用自定义的请求，需要自己来上传图片。  -->
                 </el-upload>
                  <p style="text-align:center;font-size:14px">修改头像</p>
               </el-col>
@@ -61,6 +63,25 @@ export default {
     this.getUserInfo()
   },
   methods: {
+    // 修改图片
+    myUpload (result) {
+      // axios+formdata进行上传
+      // 选择图片后会触发函数,result就是
+      // console.log(result)
+      // 发送请求
+      const formData = new FormData()
+      formData.append('photo', result.file)
+      this.$http.patch('user/photo', formData).then(res => {
+        // 上传成功
+        this.$message.success('修改数据成功')
+        // 预览的实现
+        this.userForm.photo = res.data.data.photo
+        // 同步本地存储
+        store.setUser({ photo: this.userForm.photo })
+        // 同步home组件
+        eventBus.$emit('updatePhoto', this.userForm.photo)
+      })
+    },
     // 获取用户信息
     async getUserInfo () {
       // 后台的头像和前端的本地保存的不一致,从新登陆可变好

@@ -86,6 +86,10 @@ export default {
     }
   },
   created () {
+    // 更新图片
+    eventBus.$on('updatePhoto', (photo) => {
+      this.photo = photo
+    })
     // 更新名称,eventBus中的绑定
     eventBus.$on('updateName', (name) => {
       this.name = name
