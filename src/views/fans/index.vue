@@ -5,29 +5,117 @@
               <my-bread>粉丝管理</my-bread>
           </div>
           <!-- tab组件 -->
-          <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
+          <el-tabs v-model="activeName" type="card">
             <el-tab-pane label="粉丝列表" name="list">
                 <div class="fans-list">
-                    <div class="fans-item">
-                         <el-avatar style="width: 80px;height:80px" :src="circleUrl"></el-avatar>
-                         <p style="font-size:12px">用户名</p>
+                    <div class="fans-item" v-for="item in fansList" :key="item.id.toString()">
+                         <el-avatar style="width: 80px;height:80px" :src="item.photo"></el-avatar>
+                         <p style="font-size:12px">{{item.name}}</p>
                          <el-button size="mini" plain type="primary">+关注</el-button>
                     </div>
                 </div>
                 <!-- 分页 -->
+                 <el-pagination
+                    style="margin-top:20px"
+                    v-if="total > reqParams.per_page"
+                    background
+                    layout="prev, pager, next"
+                    :total="total"
+                    :page-size="reqParams.per_page"
+                    :current-page="reqParams.page"
+                    @current-change="changePager"
+                ></el-pagination>
             </el-tab-pane>
-            <el-tab-pane label="粉丝画像" name="photo">配置管理</el-tab-pane>
+            <el-tab-pane label="粉丝画像" name="photo">
+                <!-- ref="dom" vue 获取 dom 元素的指令 和 $refs 配合使用 -->
+                <div id="main" ref="dom" style="width: 600px;height:400px;"></div>
+            </el-tab-pane>
           </el-tabs>
       </el-card>
   </div>
 </template>
 
 <script>
+import echarts from 'echarts'
 export default {
+  name: 'fans',
   data () {
     return {
-      circleUrl: 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
-      activeName: 'list'
+    //   circleUrl: null,
+      activeName: 'list',
+      reqParams: {
+        page: 1,
+        per_page: 24,
+        id: null,
+        photo: null,
+        name: null
+
+      },
+      fansList: [],
+      total: 0
+
+    }
+  },
+  created () {
+    this.getFansList()
+  },
+  mounted () {
+    this.initBar()
+  },
+  methods: {
+    // 初始化柱状图
+    initBar () {
+      // 获取dom必须在组件渲染完毕后执行,所以initBar必须在mounted里面执行
+      const dom = this.$refs.dom
+      const myChart = echarts.init(dom)
+      const option = {
+        color: ['#3398DB'],
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: { // 坐标轴指示器，坐标轴触发有效
+            type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+          }
+        },
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '3%',
+          containLabel: true
+        },
+        xAxis: [
+          {
+            type: 'category',
+            data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            axisTick: {
+              alignWithLabel: true
+            }
+          }
+        ],
+        yAxis: [
+          {
+            type: 'value'
+          }
+        ],
+        series: [
+          {
+            name: '直接访问',
+            type: 'bar',
+            barWidth: '60%',
+            data: [10, 52, 200, 334, 390, 330, 220]
+          }
+        ]
+      }
+      // 使用刚指定的配置项和数据显示图表。
+      myChart.setOption(option)
+    },
+    changePager (newPage) {
+      this.reqParams.page = newPage
+      this.getFansList()
+    },
+    async getFansList () {
+      const { data: { data } } = await this.$http.get('followers', { params: this.reqParams })
+      this.fansList = data.results
+      this.total = data.total_count
     }
   }
 }
@@ -40,7 +128,7 @@ export default {
     height: 180px;
     border: 1px solid #ddd;
     display: inline-block;
-    margin-right: 20px;
+    margin-right: 50px;
     margin-bottom: 20px;
     padding-top: 15px;
 }
