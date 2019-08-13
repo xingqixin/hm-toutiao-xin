@@ -2,7 +2,7 @@
     <div class='my-image'>
         <!-- // 图片按钮 -->
        <div class="img-btn">
-           <img :src="value||defaultImage" @click="openDialog()" alt="">
+           <img :src="value || defaultImage" @click="openDialog()" alt="">
        </div>
        <!-- 对话框 -->
        <el-dialog
@@ -104,7 +104,7 @@ export default {
     confirmImage () {
       // 让图片按钮能够显示你选中或者上传的图片地址,当你当前点击的是素材库的时候,选中的是选中的图片,当不是的时候,说明你当前点击的是上传图片,选中的是即将上传的图片
       if (this.activeName === 'image') {
-        this.value = this.selectedImageUrl
+        this.defaultImage = this.selectedImageUrl
         // 将自己选中的图片提交给父组件
         this.$emit('input', this.selectedImageUrl)
       } else {
